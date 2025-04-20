@@ -1,0 +1,88 @@
+/* Calendar custom styles */
+:global(.rdp) {
+  width: 100%;
+  min-width: 280px;
+  background: var(--background);
+  border-radius: var(--radius);
+}
+
+/* Weekdays container */
+:global(.rdp-head_row) {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+}
+
+/* Individual weekday cells */
+:global(.rdp-head_cell) {
+  width: 2.25rem; /* 36px */
+  height: 2.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+:global(.rdp-weekdays) {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+}
+
+/* Days in the calendar */
+:global(.rdp-tbody) {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+:global(.rdp-row) {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Individual day cells */
+:global(.rdp-cell) {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Day buttons */
+:global(.rdp-button) {
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+:global(.rdp-button:hover) {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+:global(.rdp-day_selected) {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* Navigation buttons */
+:global(.month-nav) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+:global(.month-nav:hover) {
+  opacity: 0.8;
+}
+
+/* Add your custom styles below this line */
