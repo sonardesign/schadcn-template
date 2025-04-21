@@ -15,13 +15,12 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { Filter } from "lucide-react"
 import { DatePicker } from "@/components/ui/date-picker"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { samples } from "@/lib/data"
-import type { Sample } from "@/lib/data"
 
 const statuses = ["blocked", "in progress", "done"] as const
 type Status = (typeof statuses)[number]
@@ -36,11 +35,10 @@ const COLUMNS = [
   { width: "w-[120px]", label: "Sample Source" },
   { width: "w-[200px]", label: "Patient Name" },
   { width: "w-[100px]", label: "Patient ID" },
-  { width: "w-[100px]", label: "Actions" },
+  { width: "w-[200px]", label: "Actions" },
 ] as const
 
 export function SamplesTable() {
-  const navigate = useNavigate()
   const [selectedStatuses, setSelectedStatuses] = useState<Status[]>([...statuses])
   const [date, setDate] = useState<string>()
   const [patientSearch, setPatientSearch] = useState("")
@@ -57,11 +55,11 @@ export function SamplesTable() {
 
   return (
     <div className="space-y-8">
-      <div className="grid gap-8" style={{ gridTemplateColumns: "100px 130px 210px 250px 170px 100px 200px 100px 100px" }}>
+      <div className="grid gap-8" style={{ gridTemplateColumns: "100px 130px 210px 250px 170px 100px 200px 100px 200px" }}>
         <div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="w-full">
+              <Button variant="outline" size="sm" className="w-full bg-white shadow-sm">
                 <Filter className="mr-2 h-4 w-4" />
                 Status
               </Button>
@@ -90,7 +88,7 @@ export function SamplesTable() {
           <DatePicker
             value={date}
             onChange={setDate}
-            className="w-full"
+            className="w-full bg-white shadow-sm"
             placeholder="Pick a date"
           />
         </div>
@@ -102,14 +100,14 @@ export function SamplesTable() {
             placeholder="Search patient..."
             value={patientSearch}
             onChange={(e) => setPatientSearch(e.target.value)}
-            className="h-9"
+            className="h-9 bg-white shadow-sm"
           />
         </div>
         <div></div>
         <div></div>
       </div>
 
-      <div className="rounded-md border bg-white">
+      <div className="rounded-md border bg-white shadow-sm">
         <Table>
           <TableHeader>
             <TableRow>
@@ -119,40 +117,43 @@ export function SamplesTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredSamples.map((sample) => (
-              <TableRow key={sample.id}>
-                <TableCell className={COLUMNS[0].width}>
-                  <Badge 
-                    variant={
-                      sample.status === "done" 
-                        ? "default"
-                        : sample.status === "in progress"
-                        ? "secondary"
-                        : "destructive"
-                    }
-                  >
-                    {sample.status}
-                  </Badge>
-                </TableCell>
-                <TableCell className={cn("font-medium", COLUMNS[1].width)}>{sample.id}</TableCell>
-                <TableCell className={COLUMNS[2].width}>{sample.creationDate}</TableCell>
-                <TableCell className={COLUMNS[3].width}>{sample.hypothesis}</TableCell>
-                <TableCell className={COLUMNS[4].width}>{sample.tissueType}</TableCell>
-                <TableCell className={COLUMNS[5].width}>{sample.sampleSource}</TableCell>
-                <TableCell className={COLUMNS[6].width}>{sample.patientName}</TableCell>
-                <TableCell className={COLUMNS[7].width}>{sample.patientId}</TableCell>
-                <TableCell className={COLUMNS[8].width}>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    className="whitespace-nowrap"
-                    onClick={() => navigate(`/sample/${sample.id}`)}
-                  >
-                    Open
-                  </Button>
+            {filteredSamples.length > 0 ? (
+              filteredSamples.map((sample) => (
+                <TableRow key={sample.id}>
+                  <TableCell className={COLUMNS[0].width}>
+                    <Badge 
+                      variant={
+                        sample.status === "done" 
+                          ? "default"
+                          : sample.status === "in progress"
+                          ? "secondary"
+                          : "destructive"
+                      }
+                    >
+                      {sample.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className={cn("font-medium", COLUMNS[1].width)}>{sample.id}</TableCell>
+                  <TableCell className={COLUMNS[2].width}>{sample.creationDate}</TableCell>
+                  <TableCell className={COLUMNS[3].width}>{sample.hypothesis}</TableCell>
+                  <TableCell className={COLUMNS[4].width}>{sample.tissueType}</TableCell>
+                  <TableCell className={COLUMNS[5].width}>{sample.sampleSource}</TableCell>
+                  <TableCell className={COLUMNS[6].width}>{sample.patientName}</TableCell>
+                  <TableCell className={COLUMNS[7].width}>{sample.patientId}</TableCell>
+                  <TableCell className={COLUMNS[8].width}>
+                    <Button variant="default" size="sm" asChild>
+                      <Link to={`/sample-new/${sample.id}`}>View Sample</Link>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={COLUMNS.length} className="h-24 text-center">
+                  No results found. Try adjusting your filters.
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>
@@ -165,6 +166,7 @@ export function SamplesTable() {
             setDate(undefined)
             setPatientSearch("")
           }}
+          className="bg-white shadow-sm"
         >
           Reset filters
         </Button>

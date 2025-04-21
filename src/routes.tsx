@@ -1,6 +1,8 @@
 import { createBrowserRouter } from "react-router-dom"
 import { SamplesTable } from "@/components/samples-table"
 import { SamplePage } from "@/components/sample-page"
+import { SamplePageNew } from "@/components/sample-page-new"
+import { ImageViewer } from "@/components/image-viewer"
 import { Layout } from "@/components/layout"
 
 export const router = createBrowserRouter([
@@ -24,6 +26,14 @@ export const router = createBrowserRouter([
       {
         path: "sample/:id",
         element: <SamplePage />,
+      },
+      {
+        path: "sample-new/:id",
+        element: <SamplePageNew />,
+      },
+      {
+        path: "image-viewer/:id/:imageIndex?",
+        element: <ImageViewer />,
       },
     ],
   },
