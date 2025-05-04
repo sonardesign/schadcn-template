@@ -30,7 +30,7 @@ const COLUMNS = [
   { width: "w-[100px]", label: "Status" },
   { width: "w-[100px]", label: "Sample ID" },
   { width: "w-[180px]", label: "Creation Date" },
-  { width: "w-[200px]", label: "Hypothesis" },
+  { width: "w-[200px]", label: "Clinical Diagnosis" },
   { width: "w-[120px]", label: "Tissue Type" },
   { width: "w-[120px]", label: "Sample Source" },
   { width: "w-[200px]", label: "Patient Name" },
@@ -135,7 +135,7 @@ export function SamplesTable() {
                   </TableCell>
                   <TableCell className={cn("font-medium", COLUMNS[1].width)}>{sample.id}</TableCell>
                   <TableCell className={COLUMNS[2].width}>{sample.creationDate}</TableCell>
-                  <TableCell className={COLUMNS[3].width}>{sample.hypothesis}</TableCell>
+                  <TableCell className={COLUMNS[3].width}>{sample.clinicalDiagnosis}</TableCell>
                   <TableCell className={COLUMNS[4].width}>{sample.tissueType}</TableCell>
                   <TableCell className={COLUMNS[5].width}>{sample.sampleSource}</TableCell>
                   <TableCell className={COLUMNS[6].width}>{sample.patientName}</TableCell>

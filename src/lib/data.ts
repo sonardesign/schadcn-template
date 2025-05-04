@@ -9,7 +9,7 @@ export interface Sample {
   assignedTo: string
   sampleSource: string
   tissueType: string
-  hypothesis: string
+  clinicalDiagnosis: string
   lastUpdated: string
   patient: {
     name: string
@@ -47,7 +47,7 @@ export const samples: Sample[] = [
     assignedTo: "Dr. Smith",
     sampleSource: "Venous draw",
     tissueType: "Blood",
-    hypothesis: "Gene mutation analysis",
+    clinicalDiagnosis: "Gene mutation analysis",
     lastUpdated: "11/25/2025",
     patient: {
       name: "John Doe",
@@ -83,7 +83,7 @@ export const samples: Sample[] = [
     assignedTo: "Dr. Johnson",
     sampleSource: "Biopsy",
     tissueType: "Skin",
-    hypothesis: "Protein expression",
+    clinicalDiagnosis: "Protein expression",
     lastUpdated: "10/15/2025",
     patient: {
       name: "Jane Smith",
@@ -119,7 +119,7 @@ export const samples: Sample[] = [
     assignedTo: "Dr. Wilson",
     sampleSource: "Biopsy",
     tissueType: "Muscle",
-    hypothesis: "Cellular response",
+    clinicalDiagnosis: "Cellular response",
     lastUpdated: "09/30/2025",
     patient: {
       name: "Alice Johnson",
@@ -155,7 +155,7 @@ export const samples: Sample[] = [
     assignedTo: "Dr. Brown",
     sampleSource: "Venous draw",
     tissueType: "Blood",
-    hypothesis: "Enzyme activity",
+    clinicalDiagnosis: "Enzyme activity",
     lastUpdated: "08/22/2025",
     patient: {
       name: "Bob Wilson",
@@ -191,7 +191,7 @@ export const samples: Sample[] = [
     assignedTo: "Dr. Davis",
     sampleSource: "Biopsy",
     tissueType: "Skin",
-    hypothesis: "Protein folding",
+    clinicalDiagnosis: "Protein folding",
     lastUpdated: "07/10/2025",
     patient: {
       name: "Carol Brown",
