@@ -4,6 +4,7 @@ export interface Sample {
   creationDate: string
   patientName: string
   patientId: string
+  dateOfBirth: string
   testType: string
   priority: string
   assignedTo: string
@@ -42,6 +43,7 @@ export const samples: Sample[] = [
     creationDate: "2025-04-19",
     patientName: "John Doe",
     patientId: "P001",
+    dateOfBirth: "1983-05-10",
     testType: "Blood Test",
     priority: "High",
     assignedTo: "Dr. Smith",
@@ -78,6 +80,7 @@ export const samples: Sample[] = [
     creationDate: "2025-04-18",
     patientName: "Jane Smith",
     patientId: "P002",
+    dateOfBirth: "1990-03-22",
     testType: "Skin Biopsy",
     priority: "Medium",
     assignedTo: "Dr. Johnson",
@@ -114,6 +117,7 @@ export const samples: Sample[] = [
     creationDate: "2025-04-17",
     patientName: "Alice Johnson",
     patientId: "P003",
+    dateOfBirth: "1997-08-14",
     testType: "Muscle Test",
     priority: "Low",
     assignedTo: "Dr. Wilson",
@@ -150,6 +154,7 @@ export const samples: Sample[] = [
     creationDate: "2025-04-16",
     patientName: "Bob Wilson",
     patientId: "P004",
+    dateOfBirth: "1972-11-30",
     testType: "Blood Test",
     priority: "High",
     assignedTo: "Dr. Brown",
@@ -186,6 +191,7 @@ export const samples: Sample[] = [
     creationDate: "2025-04-15",
     patientName: "Carol Brown",
     patientId: "P005",
+    dateOfBirth: "1978-02-05",
     testType: "Skin Test",
     priority: "Medium",
     assignedTo: "Dr. Davis",

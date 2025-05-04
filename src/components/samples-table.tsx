@@ -7,20 +7,33 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuCheckboxItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import { Filter } from "lucide-react"
+import { Search, ChevronDown } from "lucide-react"
 import { DatePicker } from "@/components/ui/date-picker"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { samples } from "@/lib/data"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 const statuses = ["blocked", "in progress", "done"] as const
 type Status = (typeof statuses)[number]
@@ -35,78 +48,62 @@ const COLUMNS = [
   { width: "w-[120px]", label: "Sample Source" },
   { width: "w-[200px]", label: "Patient Name" },
   { width: "w-[100px]", label: "Patient ID" },
+  { width: "w-[150px]", label: "Date of Birth" },
   { width: "w-[200px]", label: "Actions" },
 ] as const
 
 export function SamplesTable() {
-  const [selectedStatuses, setSelectedStatuses] = useState<Status[]>([...statuses])
-  const [date, setDate] = useState<string>()
-  const [patientSearch, setPatientSearch] = useState("")
+  // Filter states
+  const [statusFilter, setStatusFilter] = useState<Status | "all">("all")
+  const [sampleIdFilter, setSampleIdFilter] = useState("")
+  const [creationDateFilter, setCreationDateFilter] = useState<string>()
+  const [diagnosisFilter, setDiagnosisFilter] = useState("")
+  const [tissueTypeFilter, setTissueTypeFilter] = useState("")
+  const [sampleSourceFilter, setSampleSourceFilter] = useState("")
+  const [patientNameFilter, setPatientNameFilter] = useState("")
+  const [patientIdFilter, setPatientIdFilter] = useState("")
+  const [dobFilter, setDobFilter] = useState<string>()
+
+  // Get unique values for comboboxes
+  const uniqueDiagnoses = Array.from(new Set(samples.map(s => s.clinicalDiagnosis)))
+  const uniqueTissueTypes = Array.from(new Set(samples.map(s => s.tissueType)))
+  const uniqueSampleSources = Array.from(new Set(samples.map(s => s.sampleSource)))
+
+  // Popover open state for comboboxes
+  const [openDiagnosis, setOpenDiagnosis] = useState(false)
+  const [openTissueType, setOpenTissueType] = useState(false)
+  const [openSampleSource, setOpenSampleSource] = useState(false)
 
   const filteredSamples = samples.filter(sample => {
-    const matchesStatus = selectedStatuses.includes(sample.status)
-    const matchesDate = !date || sample.creationDate === date
-    const matchesPatient = !patientSearch || 
-      sample.patientName.toLowerCase().includes(patientSearch.toLowerCase()) ||
-      sample.patientId.toLowerCase().includes(patientSearch.toLowerCase())
+    const matchesStatus = statusFilter === "all" || sample.status === statusFilter
+    const matchesSampleId = !sampleIdFilter || sample.id.toLowerCase().includes(sampleIdFilter.toLowerCase())
+    const matchesCreationDate = !creationDateFilter || sample.creationDate === creationDateFilter
+    const matchesDiagnosis = !diagnosisFilter || sample.clinicalDiagnosis.toLowerCase().includes(diagnosisFilter.toLowerCase())
+    const matchesTissueType = !tissueTypeFilter || sample.tissueType.toLowerCase().includes(tissueTypeFilter.toLowerCase())
+    const matchesSampleSource = !sampleSourceFilter || sample.sampleSource.toLowerCase().includes(sampleSourceFilter.toLowerCase())
+    const matchesPatientName = !patientNameFilter || sample.patientName.toLowerCase().includes(patientNameFilter.toLowerCase())
+    const matchesPatientId = !patientIdFilter || sample.patientId.toLowerCase().includes(patientIdFilter.toLowerCase())
+    const matchesDob = !dobFilter || sample.dateOfBirth === dobFilter
     
-    return matchesStatus && matchesDate && matchesPatient
+    return matchesStatus && matchesSampleId && matchesCreationDate && matchesDiagnosis && 
+           matchesTissueType && matchesSampleSource && matchesPatientName && matchesPatientId && matchesDob
   })
+
+  // Reset all filters function
+  const resetAllFilters = () => {
+    setStatusFilter("all")
+    setSampleIdFilter("")
+    setCreationDateFilter(undefined)
+    setDiagnosisFilter("")
+    setTissueTypeFilter("")
+    setSampleSourceFilter("")
+    setPatientNameFilter("")
+    setPatientIdFilter("")
+    setDobFilter(undefined)
+  }
 
   return (
     <div className="space-y-8">
-      <div className="grid gap-8" style={{ gridTemplateColumns: "100px 130px 210px 250px 170px 100px 200px 100px 200px" }}>
-        <div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="w-full bg-white shadow-sm">
-                <Filter className="mr-2 h-4 w-4" />
-                Status
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-[150px]">
-              {statuses.map((status) => (
-                <DropdownMenuCheckboxItem
-                  key={status}
-                  checked={selectedStatuses.includes(status)}
-                  onCheckedChange={(checked) => {
-                    setSelectedStatuses(
-                      checked
-                        ? [...selectedStatuses, status]
-                        : selectedStatuses.filter(s => s !== status)
-                    )
-                  }}
-                >
-                  {status.charAt(0).toUpperCase() + status.slice(1)}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        <div></div>
-        <div>
-          <DatePicker
-            value={date}
-            onChange={setDate}
-            className="w-full bg-white shadow-sm"
-            placeholder="Pick a date"
-          />
-        </div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div>
-          <Input
-            placeholder="Search patient..."
-            value={patientSearch}
-            onChange={(e) => setPatientSearch(e.target.value)}
-            className="h-9 bg-white shadow-sm"
-          />
-        </div>
-        <div></div>
-        <div></div>
-      </div>
-
       <div className="rounded-md border bg-white shadow-sm">
         <Table>
           <TableHeader>
@@ -114,6 +111,222 @@ export function SamplesTable() {
               {COLUMNS.map((col, i) => (
                 <TableHead key={i} className={col.width}>{col.label}</TableHead>
               ))}
+            </TableRow>
+            <TableRow className="bg-slate-50">
+              {/* Status filter */}
+              <TableCell className={COLUMNS[0].width}>
+                <Select
+                  value={statusFilter}
+                  onValueChange={(value) => setStatusFilter(value as Status | "all")}
+                >
+                  <SelectTrigger className="h-8 w-full">
+                    <SelectValue placeholder="Filter..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    {statuses.map((status) => (
+                      <SelectItem key={status} value={status}>
+                        {status.charAt(0).toUpperCase() + status.slice(1)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </TableCell>
+
+              {/* Sample ID filter */}
+              <TableCell className={COLUMNS[1].width}>
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-3.5 w-3.5 text-slate-500" />
+                  <Input
+                    placeholder="Search..."
+                    value={sampleIdFilter}
+                    onChange={(e) => setSampleIdFilter(e.target.value)}
+                    className="h-8 pl-7"
+                  />
+                </div>
+              </TableCell>
+
+              {/* Creation Date filter */}
+              <TableCell className={COLUMNS[2].width}>
+                <DatePicker
+                  value={creationDateFilter}
+                  onChange={setCreationDateFilter}
+                  className="h-8 w-full"
+                />
+              </TableCell>
+
+              {/* Clinical Diagnosis filter */}
+              <TableCell className={COLUMNS[3].width}>
+                <Popover open={openDiagnosis} onOpenChange={setOpenDiagnosis}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openDiagnosis}
+                      className="h-8 w-full justify-between"
+                    >
+                      {diagnosisFilter ? diagnosisFilter : "Filter..."}
+                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <Command>
+                      <CommandInput placeholder="Search diagnosis..." className="h-9" />
+                      <CommandEmpty>No diagnosis found.</CommandEmpty>
+                      <CommandGroup>
+                        <CommandItem
+                          onSelect={() => {
+                            setDiagnosisFilter("")
+                            setOpenDiagnosis(false)
+                          }}
+                        >
+                          All
+                        </CommandItem>
+                        {uniqueDiagnoses.map((diagnosis) => (
+                          <CommandItem
+                            key={diagnosis}
+                            value={diagnosis}
+                            onSelect={() => {
+                              setDiagnosisFilter(diagnosis)
+                              setOpenDiagnosis(false)
+                            }}
+                          >
+                            {diagnosis}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </TableCell>
+
+              {/* Tissue Type filter */}
+              <TableCell className={COLUMNS[4].width}>
+                <Popover open={openTissueType} onOpenChange={setOpenTissueType}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openTissueType}
+                      className="h-8 w-full justify-between"
+                    >
+                      {tissueTypeFilter ? tissueTypeFilter : "Filter..."}
+                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <Command>
+                      <CommandInput placeholder="Search tissue..." className="h-9" />
+                      <CommandEmpty>No tissue type found.</CommandEmpty>
+                      <CommandGroup>
+                        <CommandItem
+                          onSelect={() => {
+                            setTissueTypeFilter("")
+                            setOpenTissueType(false)
+                          }}
+                        >
+                          All
+                        </CommandItem>
+                        {uniqueTissueTypes.map((tissue) => (
+                          <CommandItem
+                            key={tissue}
+                            value={tissue}
+                            onSelect={() => {
+                              setTissueTypeFilter(tissue)
+                              setOpenTissueType(false)
+                            }}
+                          >
+                            {tissue}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </TableCell>
+
+              {/* Sample Source filter */}
+              <TableCell className={COLUMNS[5].width}>
+                <Popover open={openSampleSource} onOpenChange={setOpenSampleSource}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openSampleSource}
+                      className="h-8 w-full justify-between"
+                    >
+                      {sampleSourceFilter ? sampleSourceFilter : "Filter..."}
+                      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] p-0">
+                    <Command>
+                      <CommandInput placeholder="Search source..." className="h-9" />
+                      <CommandEmpty>No sample source found.</CommandEmpty>
+                      <CommandGroup>
+                        <CommandItem
+                          onSelect={() => {
+                            setSampleSourceFilter("")
+                            setOpenSampleSource(false)
+                          }}
+                        >
+                          All
+                        </CommandItem>
+                        {uniqueSampleSources.map((source) => (
+                          <CommandItem
+                            key={source}
+                            value={source}
+                            onSelect={() => {
+                              setSampleSourceFilter(source)
+                              setOpenSampleSource(false)
+                            }}
+                          >
+                            {source}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </TableCell>
+
+              {/* Patient Name filter */}
+              <TableCell className={COLUMNS[6].width}>
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-3.5 w-3.5 text-slate-500" />
+                  <Input
+                    placeholder="Search..."
+                    value={patientNameFilter}
+                    onChange={(e) => setPatientNameFilter(e.target.value)}
+                    className="h-8 pl-7"
+                  />
+                </div>
+              </TableCell>
+
+              {/* Patient ID filter */}
+              <TableCell className={COLUMNS[7].width}>
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-3.5 w-3.5 text-slate-500" />
+                  <Input
+                    placeholder="Search..."
+                    value={patientIdFilter}
+                    onChange={(e) => setPatientIdFilter(e.target.value)}
+                    className="h-8 pl-7"
+                  />
+                </div>
+              </TableCell>
+
+              {/* Date of Birth filter */}
+              <TableCell className={COLUMNS[8].width}>
+                <DatePicker
+                  value={dobFilter}
+                  onChange={setDobFilter}
+                  className="h-8 w-full"
+                />
+              </TableCell>
+
+              {/* Actions - empty */}
+              <TableCell className={COLUMNS[9].width}></TableCell>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -140,7 +353,8 @@ export function SamplesTable() {
                   <TableCell className={COLUMNS[5].width}>{sample.sampleSource}</TableCell>
                   <TableCell className={COLUMNS[6].width}>{sample.patientName}</TableCell>
                   <TableCell className={COLUMNS[7].width}>{sample.patientId}</TableCell>
-                  <TableCell className={COLUMNS[8].width}>
+                  <TableCell className={COLUMNS[8].width}>{sample.dateOfBirth}</TableCell>
+                  <TableCell className={COLUMNS[9].width}>
                     <Button variant="default" size="sm" asChild>
                       <Link to={`/sample-new/${sample.id}`}>View Sample</Link>
                     </Button>
@@ -158,17 +372,15 @@ export function SamplesTable() {
         </Table>
       </div>
 
-      {(date || patientSearch) && (
+      {(statusFilter !== "all" || sampleIdFilter || creationDateFilter || diagnosisFilter || 
+        tissueTypeFilter || sampleSourceFilter || patientNameFilter || patientIdFilter || dobFilter) && (
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => {
-            setDate(undefined)
-            setPatientSearch("")
-          }}
+          onClick={resetAllFilters}
           className="bg-white shadow-sm"
         >
-          Reset filters
+          Reset all filters
         </Button>
       )}
     </div>
