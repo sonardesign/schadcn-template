@@ -1,9 +1,8 @@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "./ui/button"
-import { ChevronLeft, ChevronRight, MoreHorizontal, Home, Download, Search, MoreVertical, UserPlus, ClipboardList, Trash, FileText } from "lucide-react"
+import { ChevronLeft, ChevronRight, MoreVertical, UserPlus, ClipboardList, Trash, FileText } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
-import { cn } from "@/lib/utils"
 import { useNavigate, useParams } from "react-router-dom"
 import { samples } from "@/lib/data"
 import { useState, useEffect } from "react"
@@ -14,7 +13,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion"
 import {
   Sheet,
   SheetContent,
@@ -23,7 +27,6 @@ import {
   SheetTitle,
   SheetTrigger,
   SheetFooter,
-  SheetClose,
 } from "@/components/ui/custom-sheet"
 
 export function SamplePageNew() {
@@ -63,15 +66,6 @@ export function SamplePageNew() {
   if (!sample) {
     return <div className="p-8">Loading...</div>
   }
-
-  // Navigation items
-  const navItems = [
-    { label: "Home", isActive: true },
-    { label: "Patients", isActive: false },
-    { label: "Samples", isActive: false },
-    { label: "Devices", isActive: false },
-    { label: "Settings", isActive: false },
-  ]
 
   return (
     <div className="w-full min-h-screen bg-background-2 flex flex-col">

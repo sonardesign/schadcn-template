@@ -4,7 +4,6 @@ import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw, Home } from "luci
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { samples } from "@/lib/data"
-import { cn } from "@/lib/utils"
 
 export function ImageViewer() {
   const { id, imageIndex = "0" } = useParams()

@@ -12,6 +12,7 @@ export interface Sample {
   tissueType: string
   clinicalDiagnosis: string
   lastUpdated: string
+  hypothesis: string
   patient: {
     name: string
     age: number
@@ -51,6 +52,7 @@ export const samples: Sample[] = [
     tissueType: "Blood",
     clinicalDiagnosis: "Gene mutation analysis",
     lastUpdated: "11/25/2025",
+    hypothesis: "",
     patient: {
       name: "John Doe",
       age: 42,
@@ -88,6 +90,7 @@ export const samples: Sample[] = [
     tissueType: "Skin",
     clinicalDiagnosis: "Protein expression",
     lastUpdated: "10/15/2025",
+    hypothesis: "",
     patient: {
       name: "Jane Smith",
       age: 35,
@@ -125,6 +128,7 @@ export const samples: Sample[] = [
     tissueType: "Muscle",
     clinicalDiagnosis: "Cellular response",
     lastUpdated: "09/30/2025",
+    hypothesis: "",
     patient: {
       name: "Alice Johnson",
       age: 28,
@@ -162,6 +166,7 @@ export const samples: Sample[] = [
     tissueType: "Blood",
     clinicalDiagnosis: "Enzyme activity",
     lastUpdated: "08/22/2025",
+    hypothesis: "",
     patient: {
       name: "Bob Wilson",
       age: 53,
@@ -199,6 +204,7 @@ export const samples: Sample[] = [
     tissueType: "Skin",
     clinicalDiagnosis: "Protein folding",
     lastUpdated: "07/10/2025",
+    hypothesis: "",
     patient: {
       name: "Carol Brown",
       age: 47,
