@@ -78,17 +78,6 @@ export function SamplePageNew() {
       
       {/* Main content */}
       <main className="w-full px-9 py-6 flex flex-col gap-4">
-        {/* Breadcrumb */}
-        <div className="h-10">
-          <nav className="flex items-center gap-2.5 text-sm">
-            <span className="text-muted-foreground">Home</span>
-            <ChevronRight className="w-4 h-4 text-muted-foreground" />
-            <span className="text-muted-foreground">Samples</span>
-            <ChevronRight className="w-4 h-4 text-muted-foreground" />
-            <span className="text-foreground">{sample.id}</span>
-          </nav>
-        </div>
-        
         {/* Two column layout */}
         <div className="flex gap-4">
           {/* Left column: Sample details */}

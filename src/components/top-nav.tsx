@@ -6,8 +6,6 @@ import { cn } from "@/lib/utils"
 const menuItems = [
   { label: "Home", href: "/" },
   { label: "Patients", href: "/patients" },
-  { label: "Samples", href: "/samples" },
-  { label: "Devices", href: "/devices" },
   { label: "Settings", href: "/settings" },
 ]
 
@@ -25,7 +23,7 @@ export function TopNav({
     >
       <div className="flex items-center space-x-8">
         <a href="/" className="flex items-center space-x-2">
-          <img src="/logo.svg" alt="Logo" className="h-8 w-8" />
+          <h1 className="text-lg font-bold">MIRA Prototype</h1>
         </a>
         <div className="flex items-center space-x-6">
           {menuItems.map((item) => (
@@ -43,7 +41,7 @@ export function TopNav({
         <div className="relative w-64">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search products..."
+            placeholder="Search samples..."
             className="pl-8"
           />
         </div>
