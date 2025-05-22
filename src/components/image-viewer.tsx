@@ -4,17 +4,15 @@ import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw, Home } from "luci
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { samples } from "@/lib/data"
+import OpenSeadragon from "openseadragon"
 
 export function ImageViewer() {
   const { id, imageIndex = "0" } = useParams()
   const navigate = useNavigate()
   const [currentSampleIndex, setCurrentSampleIndex] = useState(0)
   const [currentImageIndex, setCurrentImageIndex] = useState(parseInt(imageIndex || "0"))
-  const [scale, setScale] = useState(1)
-  const [position, setPosition] = useState({ x: 0, y: 0 })
-  const [isDragging, setIsDragging] = useState(false)
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
-  const containerRef = useRef<HTMLDivElement>(null)
+  const viewerRef = useRef<OpenSeadragon.Viewer | null>(null)
+  const viewerContainerRef = useRef<HTMLDivElement>(null)
   
   // Find the current sample and its index
   useEffect(() => {
@@ -35,6 +33,51 @@ export function ImageViewer() {
   // Get the current sample
   const sample = samples[currentSampleIndex]
   
+  // Initialize OpenSeaDragon viewer
+  useEffect(() => {
+    if (viewerContainerRef.current && !viewerRef.current) {
+      viewerRef.current = OpenSeadragon({
+        id: viewerContainerRef.current.id,
+        prefixUrl: "https://cdn.jsdelivr.net/npm/openseadragon@2.4/build/openseadragon/images/",
+        animationTime: 0.5,
+        blendTime: 0.1,
+        constrainDuringPan: true,
+        maxZoomPixelRatio: 2,
+        minZoomLevel: 0.5,
+        visibilityRatio: 0.2,
+        zoomPerScroll: 1.2,
+        showNavigator: true,
+        navigatorPosition: "BOTTOM_RIGHT",
+        showRotationControl: true,
+        showHomeControl: true,
+        showZoomControl: true,
+        showFullPageControl: false,
+      })
+    }
+
+    return () => {
+      if (viewerRef.current) {
+        viewerRef.current.destroy()
+        viewerRef.current = null
+      }
+    }
+  }, [])
+
+  // Update the image when image index changes
+  useEffect(() => {
+    if (viewerRef.current && sample) {
+      // Get the current image URL
+      const imageUrl = getImageSource()
+
+      // Add the new tile source
+      viewerRef.current.open({
+        type: 'image',
+        url: imageUrl,
+        buildPyramid: false,
+      })
+    }
+  }, [currentImageIndex, currentSampleIndex])
+  
   // Handle navigation to previous sample
   const goToPreviousImage = () => {
     const newIndex = currentImageIndex > 0 ? currentImageIndex - 1 : 3 // Assuming 4 images total (main + 3 thumbnails)
@@ -49,51 +92,23 @@ export function ImageViewer() {
   
   // Handle zoom in
   const zoomIn = () => {
-    setScale(prev => Math.min(prev + 0.25, 3)) // Max zoom 3x
+    if (viewerRef.current) {
+      viewerRef.current.viewport.zoomBy(1.5)
+    }
   }
   
   // Handle zoom out
   const zoomOut = () => {
-    setScale(prev => Math.max(prev - 0.25, 0.5)) // Min zoom 0.5x
-  }
-  
-  // Handle reset zoom and position
-  const resetView = () => {
-    setScale(1)
-    setPosition({ x: 0, y: 0 })
-  }
-  
-  // Handle mouse wheel for zooming
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault()
-    if (e.deltaY < 0) {
-      setScale(prev => Math.min(prev + 0.1, 3)) // Zoom in, max 3x
-    } else {
-      setScale(prev => Math.max(prev - 0.1, 0.5)) // Zoom out, min 0.5x
+    if (viewerRef.current) {
+      viewerRef.current.viewport.zoomBy(0.667)
     }
   }
   
-  // Handle mouse down for panning
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault()
-    setIsDragging(true)
-    setDragStart({ x: e.clientX, y: e.clientY })
-  }
-  
-  // Handle mouse move for panning
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return
-    
-    const dx = e.clientX - dragStart.x
-    const dy = e.clientY - dragStart.y
-    
-    setPosition(prev => ({ x: prev.x + dx, y: prev.y + dy }))
-    setDragStart({ x: e.clientX, y: e.clientY })
-  }
-  
-  // Handle mouse up to stop panning
-  const handleMouseUp = () => {
-    setIsDragging(false)
+  // Handle reset view
+  const resetView = () => {
+    if (viewerRef.current) {
+      viewerRef.current.viewport.goHome()
+    }
   }
   
   // If no sample is loaded yet, show loading state
@@ -143,31 +158,13 @@ export function ImageViewer() {
       
       {/* Main content */}
       <div className="flex flex-1 p-4 gap-4 overflow-hidden">
-        {/* Image viewer area */}
+        {/* OpenSeadragon viewer */}
         <div 
-          className="flex-1 bg-white rounded-md shadow-sm overflow-hidden cursor-move"
-          ref={containerRef}
-          onWheel={handleWheel}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-        >
-          <div 
-            className="w-full h-full flex items-center justify-center"
-            style={{ 
-              transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
-              transition: isDragging ? 'none' : 'transform 0.1s ease-out'
-            }}
-          >
-            <img 
-              src={getImageSource()} 
-              alt={`Sample ${sample.id} - Image ${currentImageIndex + 1}`}
-              className="max-w-full max-h-full object-contain"
-              draggable="false"
-            />
-          </div>
-        </div>
+          id="openseadragon-viewer"
+          ref={viewerContainerRef}
+          className="flex-1 bg-white rounded-md shadow-sm overflow-hidden"
+          style={{ position: 'relative' }}
+        />
         
         {/* Details panel */}
         <Card className="w-[350px] shadow-sm">
