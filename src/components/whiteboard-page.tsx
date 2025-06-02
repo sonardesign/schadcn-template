@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Whiteboard } from "@/components/whiteboard";
 import { RoomProvider } from "@/lib/liveblocks";
 import { Button } from "@/components/ui/button";
