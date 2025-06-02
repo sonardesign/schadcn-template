@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { Whiteboard } from "@/components/whiteboard";
 import { RoomProvider } from "@/lib/liveblocks";
-import { Toaster } from "@/components/ui/toaster";
-import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,7 +12,11 @@ export function WhiteboardPage() {
   const [userName, setUserName] = useState("");
   const [roomName, setRoomName] = useState("");
   const [color, setColor] = useState("#5c6ac4");
-  const { toast } = useToast();
+  // Simple toast notification function
+  const toast = ({ title, description }: { title: string; description: string; variant?: "destructive" }) => {
+    // We ignore the variant parameter for now since we're using simple alerts
+    alert(`${title}\n${description}`);
+  };
 
   const handleJoinRoom = () => {
     if (!roomName) {
@@ -121,7 +123,7 @@ export function WhiteboardPage() {
         </RoomProvider>
       )}
       
-      <Toaster />
+      {/* Toast notifications handled via simple alert for now */}
     </div>
   );
 }

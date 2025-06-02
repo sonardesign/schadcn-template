@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils"
-import { Home, Users, User, Building2, PanelLeftClose, PanelLeft } from "lucide-react"
+import { Home, Users, User, Building2, PanelLeftClose, PanelLeft, Pencil } from "lucide-react"
 import { UserNav } from "./user-nav"
 import { useState } from "react"
 import { Button } from "./ui/button"
@@ -119,6 +119,24 @@ export function MainNav({
           </div>
           <span className={cn("text-sm transition-all duration-300 ml-3", isCollapsed && "hidden")}>
             Physicians
+          </span>
+        </a>
+        <a
+          href="/whiteboard"
+          className={cn(
+            "group flex items-center rounded-md text-muted-foreground font-medium hover:bg-accent hover:text-accent-foreground",
+            isCollapsed ? "h-10 w-10 justify-center" : "h-10 px-3",
+            "transition-all duration-300"
+          )}
+        >
+          <div className={cn(
+            "flex items-center justify-center",
+            isCollapsed ? "h-10 w-10" : "h-10 w-10"
+          )}>
+            <Pencil className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />
+          </div>
+          <span className={cn("text-sm transition-all duration-300 ml-3", isCollapsed && "hidden")}>
+            Whiteboard
           </span>
         </a>
       </div>
